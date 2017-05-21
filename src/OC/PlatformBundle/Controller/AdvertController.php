@@ -229,6 +229,14 @@ class AdvertController extends Controller
 		slug " . $slug . ", créée en " . $year . " et au format " . $_format;
 		return new Response($content);
 	}
+	public function testFindAll()
+	{
+		$repository = $this->getDoctrine()->getManager()->getRepository("OCPlatformBundle:Advert");
+		
+		$listAdverts = $repository->myFindAll();
+		
+		return $listAdverts;
+	}
 	public function menuAction($limit)
 	{
 		// On fixe en dur une liste ici, bien entendu par la suite
