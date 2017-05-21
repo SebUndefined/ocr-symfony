@@ -5,12 +5,14 @@ namespace OC\PlatformBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Advert
  *
  * @ORM\Table(name="oc_advert")
  * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Advert
 {
@@ -76,7 +78,22 @@ class Advert
      * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert")
      */
     private $applications;
+    /**
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
     
+    /**
+     * 
+     * @ORM\Column(name="nb_applications", type="integer")
+     */
+    private $nbApplications = 0;
+    
+    /**
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
     public function __construct()
     {
     	//Défault value for date, today
@@ -300,5 +317,72 @@ class Advert
     public function getApplications()
     {
         return $this->applications;
+    }
+	
+	/**
+	 *
+	 * @return the unknown_type
+	 */
+	public function getUpdatedAt() {
+		return $this->updatedAt;
+	}
+	
+	/**
+	 *
+	 * @param unknown_type $updatedAt        	
+	 */
+	public function setUpdatedAt($updatedAt) {
+		$this->updatedAt = $updatedAt;
+		return $this;
+	}
+	public function getNbApplications() {
+		return $this->nbApplications;
+	}
+	public function setNbApplications($nbApplications) {
+		$this->nbApplications = $nbApplications;
+		return $this;
+	}
+	
+	/**
+	 * @ORM\PreUpdate()
+	 */
+	public function updateAt()
+	{
+		$this->setUpdatedAt(new \DateTime());
+	}
+	
+	public function increaseApplication()
+	{
+		$this->nbApplications++;
+	}
+	
+	public function decreaseApplication()
+	{
+		$this->nbApplications--;
+	}
+	
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Advert
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
